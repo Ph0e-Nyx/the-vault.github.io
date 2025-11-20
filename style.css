@@ -1,17 +1,17 @@
 :root {
-  /* Dashboard Palette */
+  /* Paleta del panel */
   --bg-color: #050505;
   --sidebar-bg: #0a0a0a;
   --widget-bg: rgba(20, 20, 20, 0.6);
   --border-color: rgba(255, 255, 255, 0.08);
 
-  /* Jinx Accents */
+  /* Paleta Jinx */
   --accent-cyan: #00f0ff;
   --accent-pink: #d946ef;
   --text-primary: #e5e5e5;
   --text-secondary: #a3a3a3;
 
-  /* Typography */
+  /* Tipografía */
   --font-main: 'Poppins', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -40,14 +40,14 @@ body {
   pointer-events: none;
 }
 
-/* Dashboard Layout */
+/* Diseño del panel */
 .dashboard {
   display: grid;
   grid-template-columns: 260px 1fr;
   height: 100vh;
 }
 
-/* Sidebar */
+/* Barra lateral */
 .sidebar {
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
@@ -134,19 +134,19 @@ body {
   padding-top: 1rem;
 }
 
-/* Main Content */
+/* Contenido principal */
 .main-content {
   padding: 2rem;
   overflow-y: auto;
   position: relative;
 }
 
-/* Utility Classes */
+/* Utilidad */
 .hidden {
   display: none !important;
 }
 
-/* Dashboard View */
+/* Vista del panel*/
 #dashboard-view {
   display: flex;
   flex-direction: column;
@@ -235,7 +235,7 @@ body {
   color: #fff;
 }
 
-/* Dashboard Grid */
+/* Cuadricula del panel*/
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -294,7 +294,7 @@ body {
   border: 1px solid var(--border-color);
 }
 
-/* Detail: About */
+/* Detalles: Acerca de */
 .bio-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -316,7 +316,7 @@ body {
   color: var(--accent-cyan);
 }
 
-/* Detail: Arsenal */
+/* Detalles: Arsenal */
 .featured-repo {
   background: linear-gradient(45deg, rgba(0, 240, 255, 0.1), transparent);
   border: 1px solid var(--accent-cyan);
@@ -390,7 +390,7 @@ body {
   font-family: var(--font-mono);
 }
 
-/* Detail: Projects */
+/* Detalles: Proyectos */
 .projects-list {
   display: flex;
   flex-direction: column;
@@ -460,7 +460,7 @@ body {
   background: transparent;
 }
 
-/* Animations */
+/* Animaciones */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -499,7 +499,7 @@ body {
   }
 }
 
-/* Bio Styles */
+/* Biografia, estilo */
 .bio-subtitle {
   color: var(--accent-cyan);
   font-size: 1.1rem;
@@ -531,7 +531,7 @@ body {
   font-style: italic;
 }
 
-/* Writeups Styles */
+/* Writeups Estilos */
 .tabs-container {
   display: flex;
   gap: 1rem;
