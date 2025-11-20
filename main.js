@@ -32,7 +32,7 @@ function type() {
     setTimeout(type, typeSpeed);
 }
 
-// Sistema de Cristales Hextech (Hextech Shards)
+// Sistema de Cristales, fondo portafolio
 const canvas = document.getElementById('particles-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -128,29 +128,29 @@ function animateCrystals() {
     requestAnimationFrame(animateCrystals);
 }
 
-// NAVIGATION LOGIC (SPA)
+// Navegacion Lógica 
 function showDetail(sectionId) {
     const dashboardView = document.getElementById('dashboard-view');
     const detailView = document.getElementById('detail-view');
     const allDetails = document.querySelectorAll('.detail-section');
     const navItems = document.querySelectorAll('.nav-item');
 
-    // Hide Dashboard
+    // Ocultar panel
     dashboardView.classList.add('hidden');
 
-    // Show Detail Container
+    // Mostrar contenedor de detalles
     detailView.classList.remove('hidden');
 
-    // Hide all specific details first
+    // Oculta primero todos los detalles específicos
     allDetails.forEach(el => el.classList.add('hidden'));
 
-    // Show the requested detail
+    // Mostrar el detalle solicitado
     const targetDetail = document.getElementById(`detail-${sectionId}`);
     if (targetDetail) {
         targetDetail.classList.remove('hidden');
     }
 
-    // Update Nav Active State
+    // Actualizar estado activo de navegación
     navItems.forEach(item => {
         item.classList.remove('active');
         if (item.dataset.target === sectionId) {
@@ -164,13 +164,13 @@ function showDashboard() {
     const detailView = document.getElementById('detail-view');
     const navItems = document.querySelectorAll('.nav-item');
 
-    // Hide Detail Container
+    // Ocultar contenedor de detalles
     detailView.classList.add('hidden');
 
-    // Show Dashboard
+    // Mostrar panel
     dashboardView.classList.remove('hidden');
 
-    // Update Nav Active State
+    // Actualizar estado activo de navegación
     navItems.forEach(item => {
         item.classList.remove('active');
         if (item.dataset.target === 'dashboard') {
@@ -179,14 +179,14 @@ function showDashboard() {
     });
 }
 
-// Tab Switching Logic
+// CAmbio de pestañas
 function switchTab(platform) {
-    // Buttons
+    // BBotones
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    // Content
+    // Contenido
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(content => content.classList.add('hidden'));
 
@@ -196,7 +196,7 @@ function switchTab(platform) {
     }
 }
 
-// Event Listeners for Nav Items
+// Eventos para elementos de navegación
 document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item');
 
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', resizeCanvas);
 
-// Expose functions to global scope for HTML onclick attributes
+// Funciones globales
 window.showDetail = showDetail;
 window.showDashboard = showDashboard;
 window.switchTab = switchTab;
