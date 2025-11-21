@@ -655,18 +655,6 @@ body {
   color: var(--accent-cyan);
 }
 
-.machine-action:hover {
-  background: var(--accent-cyan) !important;
-  color: #000 !important;
-}
-
-flex-wrap: wrap;
-}
-
-.writeup-meta strong {
-  color: var(--accent-cyan);
-}
-
 .writeup-body {
   color: var(--text-secondary);
   line-height: 1.8;
