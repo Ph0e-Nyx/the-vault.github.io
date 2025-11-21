@@ -32,7 +32,7 @@ function type() {
     setTimeout(type, typeSpeed);
 }
 
-// Sistema de Cristales, fondo portafolio
+// Sistema de Cristales Hextech (Hextech Shards)
 const canvas = document.getElementById('particles-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -128,29 +128,32 @@ function animateCrystals() {
     requestAnimationFrame(animateCrystals);
 }
 
-// Navegacion Lógica 
+// NAVIGATION LOGIC (SPA)
 function showDetail(sectionId) {
     const dashboardView = document.getElementById('dashboard-view');
     const detailView = document.getElementById('detail-view');
     const allDetails = document.querySelectorAll('.detail-section');
     const navItems = document.querySelectorAll('.nav-item');
 
-    // Ocultar panel
+    // Hide Dashboard
     dashboardView.classList.add('hidden');
 
-    // Mostrar contenedor de detalles
+    // Show Detail Container
     detailView.classList.remove('hidden');
 
-    // Oculta primero todos los detalles específicos
+    // Hide all specific details first
     allDetails.forEach(el => el.classList.add('hidden'));
 
-    // Mostrar el detalle solicitado
+    // Hide all writeup containers
+    document.querySelectorAll('.writeup-container').forEach(el => el.classList.add('hidden'));
+
+    // Show the requested detail
     const targetDetail = document.getElementById(`detail-${sectionId}`);
     if (targetDetail) {
         targetDetail.classList.remove('hidden');
     }
 
-    // Actualizar estado activo de navegación
+    // Update Nav Active State
     navItems.forEach(item => {
         item.classList.remove('active');
         if (item.dataset.target === sectionId) {
@@ -164,13 +167,16 @@ function showDashboard() {
     const detailView = document.getElementById('detail-view');
     const navItems = document.querySelectorAll('.nav-item');
 
-    // Ocultar contenedor de detalles
+    // Hide Detail Container
     detailView.classList.add('hidden');
 
-    // Mostrar panel
+    // Show Dashboard
     dashboardView.classList.remove('hidden');
 
-    // Actualizar estado activo de navegación
+    // Hide all writeup containers
+    document.querySelectorAll('.writeup-container').forEach(el => el.classList.add('hidden'));
+
+    // Update Nav Active State
     navItems.forEach(item => {
         item.classList.remove('active');
         if (item.dataset.target === 'dashboard') {
@@ -179,14 +185,14 @@ function showDashboard() {
     });
 }
 
-// CAmbio de pestañas
+// Tab Switching Logic
 function switchTab(platform) {
-    // BBotones
+    // Buttons
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    // Contenido
+    // Content
     const contents = document.querySelectorAll('.tab-content');
     contents.forEach(content => content.classList.add('hidden'));
 
@@ -196,7 +202,7 @@ function switchTab(platform) {
     }
 }
 
-// Eventos para elementos de navegación
+// Event Listeners for Nav Items
 document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item');
 
@@ -219,7 +225,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('resize', resizeCanvas);
 
-// Funciones globales
+// Writeup Navigation
+function showWriteup(id) {
+    // Hide the main writeups list container (tabs and grid)
+    const tabsContainer = document.querySelector('.tabs-container');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    if (tabsContainer) tabsContainer.classList.add('hidden');
+    tabContents.forEach(el => el.classList.add('hidden'));
+
+    // Show the specific writeup
+    const writeup = document.getElementById(`writeup-${id}`);
+    if (writeup) {
+        writeup.classList.remove('hidden');
+        // Scroll to top of detail view
+        document.getElementById('detail-view').scrollTop = 0;
+    }
+}
+
+function closeWriteup() {
+    // Hide all writeups
+    document.querySelectorAll('.writeup-container').forEach(el => el.classList.add('hidden'));
+
+    // Show the main writeups list container
+    const tabsContainer = document.querySelector('.tabs-container');
+    if (tabsContainer) tabsContainer.classList.remove('hidden');
+
+    // Show the active tab content
+    // We find the active button to know which tab to show
+    const activeBtn = document.querySelector('.tab-button.active');
+    if (activeBtn) {
+        // Assuming onclick="switchTab('htb')" format
+        const platform = activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1];
+        const targetContent = document.getElementById(`tab-${platform}`);
+        if (targetContent) targetContent.classList.remove('hidden');
+    } else {
+        // Default to HTB if something is wrong
+        const htbTab = document.getElementById('tab-htb');
+        if (htbTab) htbTab.classList.remove('hidden');
+    }
+}
+
+// Expose functions to global scope for HTML onclick attributes
 window.showDetail = showDetail;
 window.showDashboard = showDashboard;
 window.switchTab = switchTab;
+window.showWriteup = showWriteup;
+window.closeWriteup = closeWriteup;
