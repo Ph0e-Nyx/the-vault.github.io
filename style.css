@@ -660,38 +660,7 @@ body {
   color: #000 !important;
 }
 
-/* Writeup Detail View */
-.writeup-container {
-  animation: fadeIn 0.4s ease-out;
-}
-
-.writeup-header {
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 2rem;
-}
-
-.writeup-hero-img {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  border: 1px solid var(--border-color);
-}
-
-.writeup-header h1 {
-  font-size: 2rem;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-}
-
-.writeup-meta {
-  display: flex;
-  gap: 1.5rem;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  flex-wrap: wrap;
+flex-wrap: wrap;
 }
 
 .writeup-meta strong {
