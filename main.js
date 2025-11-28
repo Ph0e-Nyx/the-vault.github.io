@@ -266,9 +266,22 @@ function closeWriteup() {
     }
 }
 
+// Arsenal Toggle Logic
+function toggleRepoDetails(repoId) {
+    const details = document.getElementById(`repo-${repoId}`);
+    if (details) {
+        details.classList.toggle('hidden');
+
+        // Optional: Rotate chevron if we add one later
+        // const chevron = document.querySelector(`[onclick="toggleRepoDetails('${repoId}')"] .fa-chevron-down`);
+        // if (chevron) chevron.classList.toggle('rotate-180');
+    }
+}
+
 // Expose functions to global scope for HTML onclick attributes
 window.showDetail = showDetail;
 window.showDashboard = showDashboard;
 window.switchTab = switchTab;
 window.showWriteup = showWriteup;
 window.closeWriteup = closeWriteup;
+window.toggleRepoDetails = toggleRepoDetails;
