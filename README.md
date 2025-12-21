@@ -3,7 +3,8 @@
 
 Bienvenido a **THE VAULT**, el centro de operaciones digital diseñado para un especialista en Blue Team. Esta Single Page Application (SPA) rompe con los diseños web tradicionales para ofrecer una experiencia inmersiva de **Command Center**.
 
-![Dashboard](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Q1YjNhZTYwNzQ4NzQ5ODc1NzQ4NzQ5ODc1NzQ4NzQ5ODc1NzQ4/QSsO1uJ1YwJ6S5hJ6S/giphy.gif)
+![Dashboard](./assets/dashboard.webp)
+*(Captura real del sistema "The Vault")*
 
 ## 📡 Módulos del Sistema
 
